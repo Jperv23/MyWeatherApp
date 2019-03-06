@@ -1,15 +1,15 @@
 package org.pursuit.myweatherapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
+import org.pursuit.myweatherapp.controller.WeatherAdapter;
 import org.pursuit.myweatherapp.model.Temp;
-import org.pursuit.myweatherapp.model.WeatherAdapter;
 import org.pursuit.myweatherapp.model.WeatherResponse;
 import org.pursuit.myweatherapp.network.MyWeatherService;
 import org.pursuit.myweatherapp.network.RetrofitSingleton;
@@ -26,10 +26,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
+    private ToggleButton changeDegreeButton;
+//    private TextView maxTempView;
+//    private TextView minTempView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        changeDegreeButton = findViewById(R.id.change_degree_button);
+//        maxTempView = findViewById(R.id.maxTemp_view);
+//        minTempView = findViewById(R.id.minTemp_view);
 
         final RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
@@ -39,13 +46,28 @@ public class MainActivity extends AppCompatActivity {
         Call<WeatherResponse> weatherResponseCall = weatherService.getWeatherResponse();
         weatherResponseCall.enqueue(new Callback<WeatherResponse>() {
             @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+            public void onResponse(Call<WeatherResponse> call, final Response<WeatherResponse> response) {
                 Log.d(TAG, response.body().getResponse().get(0).getPeriods().get(0).getDateTimeISO());
 
-                List<Temp> tempList = new ArrayList<>();
+                final List<Temp> tempList = new ArrayList<>();
                 for (Temp t : response.body().getResponse().get(0).getPeriods()) {
                     tempList.add(t);
                 }
+
+                changeDegreeButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        changeDegreeButton.setTextOn("Show °F");
+                        changeDegreeButton.setTextOff("Show °C");
+                        if (isChecked) {
+//                            maxTempView.setText(tempList.get(0).getMaxTempC() + "°C");
+//                            minTempView.setText(String.valueOf(temp.getMinTempC()) + "°C");
+                        } else {
+//                            maxTempView.setText(String.valueOf(temp.getMaxTempF()) + "°F");
+//                            minTempView.setText(String.valueOf(temp.getMinTempF()) + "°F");
+                        }
+                    }
+                });
+
                 recyclerView.setAdapter(new WeatherAdapter(tempList));
                 recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
             }
@@ -56,4 +78,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

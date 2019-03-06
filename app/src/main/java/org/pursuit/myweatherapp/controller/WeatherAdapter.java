@@ -1,4 +1,4 @@
-package org.pursuit.myweatherapp.model;
+package org.pursuit.myweatherapp.controller;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.pursuit.myweatherapp.R;
+import org.pursuit.myweatherapp.model.Temp;
 import org.pursuit.myweatherapp.view.WeatherViewHolder;
 
 import java.util.List;
